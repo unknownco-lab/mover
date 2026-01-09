@@ -1,5 +1,6 @@
 // Native
 import { join } from 'path';
+import { existsSync } from 'fs';
 
 // Packages
 import { BrowserWindow, app, ipcMain, IpcMainEvent, nativeTheme } from 'electron';
@@ -7,7 +8,7 @@ import isDev from 'electron-is-dev';
 import { mouse, left, right, up, down } from '@nut-tree/nut-js';
 const updateElectronApp = require('update-electron-app');
 
-const height = 600;
+const height = 800;
 const width = 800;
 
 function createWindow() {
@@ -22,33 +23,83 @@ function createWindow() {
     fullscreenable: true,
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
-      // Enable remote debugging in development
-      ...(isDev && {
-        webSecurity: false,
-        nodeIntegration: false,
-        contextIsolation: true
-      })
+      nodeIntegration: false,
+      contextIsolation: true,
+      // Enable remote debugging in development or when --devtools flag is present
+      webSecurity: isDev ? false : true,
     }
   });
 
   const port = process.env.PORT || 3000;
-  const url = isDev ? `http://localhost:${port}` : join(__dirname, '../dist-vite/index.html');
-
-  // and load the index.html of the app.
+  let url: string;
+  
   if (isDev) {
-    window?.loadURL(url);
-    // Open the DevTools automatically only if --devtools flag is present
-    if (process.argv.includes('--devtools')) {
-      window?.webContents.openDevTools();
-    }
+    url = `http://localhost:${port}`;
   } else {
-    window?.loadFile(url);
+    // In production, try multiple possible paths
+    // Electron Forge packages files in resources/app.asar or resources/app.asar.unpacked
+    const possiblePaths = [
+      join(__dirname, '../dist-vite/index.html'),
+      join(app.getAppPath(), 'dist-vite/index.html'),
+      join(process.resourcesPath, 'app/dist-vite/index.html'),
+    ];
+    
+    // Try to find the correct path
+    url = possiblePaths.find(path => existsSync(path)) || possiblePaths[0];
+    
+    console.log('Production paths checked:', possiblePaths);
+    console.log('Using path:', url);
   }
 
-  // Enable keyboard shortcuts for DevTools in development
-  if (isDev) {
-    window.webContents.on('before-input-event', (_event, input) => {
-      // F12 or Ctrl+Shift+I to toggle DevTools
+  // Load the index.html of the app with error handling
+  const loadWindow = async () => {
+    try {
+      if (isDev) {
+        await window?.loadURL(url);
+        // Open the DevTools automatically only if --devtools flag is present
+        if (process.argv.includes('--devtools')) {
+          window?.webContents.openDevTools();
+        }
+      } else {
+        await window?.loadFile(url);
+      }
+      
+      // Enable DevTools in production if --devtools flag is present (for debugging)
+      if (!isDev && process.argv.includes('--devtools')) {
+        window?.webContents.openDevTools();
+      }
+    } catch (error) {
+      console.error('Failed to load window:', error);
+      // Show error in DevTools if available
+      if (window && !window.webContents.isDevToolsOpened()) {
+        window.webContents.openDevTools();
+      }
+    }
+  };
+
+  loadWindow();
+
+  // Add error handlers for renderer process
+  window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+    console.error('Failed to load:', {
+      errorCode,
+      errorDescription,
+      validatedURL
+    });
+    // Open DevTools on error to help diagnose
+    if (!window.webContents.isDevToolsOpened()) {
+      window.webContents.openDevTools();
+    }
+  });
+
+  window.webContents.on('render-process-gone', (_event, details) => {
+    console.error('Render process crashed:', details);
+  });
+
+  // Enable keyboard shortcuts for DevTools (works in dev and production with --devtools flag)
+  window.webContents.on('before-input-event', (_event, input) => {
+    // F12 or Ctrl+Shift+I to toggle DevTools (always allow in dev, or if --devtools flag is present)
+    if (isDev || process.argv.includes('--devtools')) {
       if (input.key === 'F12' || (input.control && input.shift && input.key === 'I')) {
         if (window.webContents.isDevToolsOpened()) {
           window.webContents.closeDevTools();
@@ -56,8 +107,8 @@ function createWindow() {
           window.webContents.openDevTools();
         }
       }
-    });
-  }
+    }
+  });
 
   // For AppBar
   ipcMain.on('minimize', () => {

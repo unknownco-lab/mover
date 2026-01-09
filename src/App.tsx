@@ -15,7 +15,26 @@ export default function App() {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    window.Main.removeLoading();
+    // Remove loading screen - with fallback if preload script didn't load
+    try {
+      if (window.Main && typeof window.Main.removeLoading === 'function') {
+        window.Main.removeLoading();
+      } else {
+        // Fallback: manually remove loading elements if preload failed
+        console.warn('window.Main not available, using fallback to remove loading screen');
+        const loadingStyle = document.getElementById('app-loading-style');
+        const loadingDiv = document.getElementById('loading-to-remove');
+        if (loadingStyle) loadingStyle.remove();
+        if (loadingDiv) loadingDiv.remove();
+      }
+    } catch (error) {
+      console.error('Failed to remove loading screen:', error);
+      // Fallback: manually remove loading elements
+      const loadingStyle = document.getElementById('app-loading-style');
+      const loadingDiv = document.getElementById('loading-to-remove');
+      if (loadingStyle) loadingStyle.remove();
+      if (loadingDiv) loadingDiv.remove();
+    }
   }, []);
 
   const executePattern = async (pattern: string, distance: number, signal: AbortSignal) => {
