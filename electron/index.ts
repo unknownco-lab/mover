@@ -10,11 +10,25 @@ import { mouse, left, right, up, down } from '@nut-tree/nut-js';
 const height = 800;
 const width = 800;
 
+function getIconPath() {
+  if (isDev) {
+    return join(__dirname, '..', 'src', 'assets', 'icons', 'Icon-Electron.png');
+  }
+  // In production, icon is packaged with the app
+  const possibleIconPaths = [
+    join(__dirname, '../assets/icons/Icon-Electron.png'),
+    join(app.getAppPath(), 'assets/icons/Icon-Electron.png'),
+    join(process.resourcesPath, 'app/assets/icons/Icon-Electron.png'),
+  ];
+  return possibleIconPaths.find(p => existsSync(p)) || possibleIconPaths[0];
+}
+
 function createWindow() {
   // Create the browser window.
   const window = new BrowserWindow({
     width,
     height,
+    icon: getIconPath(),
     //  change to false to use AppBar
     frame: false,
     show: true,

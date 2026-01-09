@@ -1,9 +1,11 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+const path = require('path');
 
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: path.join(__dirname, 'src', 'assets', 'icons', 'Icon-Electron'),
     osxSign: {},
     osxNotarize: {
       tool: 'notarytool',
@@ -16,7 +18,14 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        name: 'mover',
+        setupIcon: path.join(__dirname, 'src', 'assets', 'icons', 'Icon-Electron.png'),
+        iconUrl: path.join(__dirname, 'src', 'assets', 'icons', 'Icon-Electron.png'),
+        shortcutName: 'Mover',
+        createDesktopShortcut: true,
+        createStartMenuShortcut: true,
+      },
       platforms: ['win32'],
     },
     {
