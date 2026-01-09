@@ -17,6 +17,14 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {},
+      platforms: ['win32'],
+    },
+    {
+      name: '@electron-forge/maker-dmg',
+      config: {
+        format: 'UDZO',
+      },
+      platforms: ['darwin'],
     },
     {
       name: '@electron-forge/maker-zip',
@@ -25,10 +33,12 @@ module.exports = {
     {
       name: '@electron-forge/maker-deb',
       config: {},
+      platforms: ['linux'],
     },
     {
       name: '@electron-forge/maker-rpm',
       config: {},
+      platforms: ['linux'],
     },
   ],
   publishers: [
