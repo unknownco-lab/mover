@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: path.join(__dirname, 'src', 'assets', 'icons', 'Icon-Electron'),
+    icon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.png'),
     osxSign: {},
     osxNotarize: {
       tool: 'notarytool',
@@ -20,8 +20,8 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'mover',
-        setupIcon: path.join(__dirname, 'src', 'assets', 'icons', 'Icon-Electron.png'),
-        iconUrl: path.join(__dirname, 'src', 'assets', 'icons', 'Icon-Electron.png'),
+        setupIcon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.png'),
+        iconUrl: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.png'),
         shortcutName: 'Mover',
         createDesktopShortcut: true,
         createStartMenuShortcut: true,
