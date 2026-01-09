@@ -1,0 +1,25 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+
+# production
+/dist
+/dist-vite
+/dist-electron
+
+# debug
+npm-debug.log*
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# npm config (may contain auth tokens)
+.npmrc
+
+out/

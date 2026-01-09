@@ -1,0 +1,102 @@
+{
+  "name": "mover",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "dist-electron/index.js",
+  "author": {
+    "name": "unknownco-lab"
+  },
+  "description": "Mover is a productivity tool that keeps your computer active during legitimate work scenarios.",
+  "keywords": [
+    "mover",
+    "productivity",
+    "active",
+    "work"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unknownco-lab/mover"
+  },
+  "productName": "mover",
+  "scripts": {
+    "dev": "vite",
+    "dev:electron": "concurrently \"vite\" \"wait-on http://localhost:3000 && electron .\"",
+    "dev:electron:debug": "concurrently \"vite\" \"wait-on http://localhost:3000 && electron . --devtools\"",
+    "build": "npm run build:vite && npm run build:electron",
+    "build:vite": "vite build",
+    "build:electron": "tsc -p electron",
+    "dist": "npm run build && electron-builder",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:linux": "npm run build && electron-builder --linux",
+    "pack": "npm run build && electron-builder --dir",
+    "clean": "rimraf dist main src/out",
+    "type-check": "tsc",
+    "lint": "eslint . --ext js,jsx,ts,tsx",
+    "lint:fix": "eslint . --ext js,jsx,ts,tsx --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"electron/**/*.{js,ts}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" \"electron/**/*.{js,ts}\"",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
+  },
+  "dependencies": {
+    "@fluentui/react-components": "^9.72.9",
+    "@material-tailwind/react": "^2.1.9",
+    "@nut-tree/nut-js": "^3.1.2",
+    "@vitejs/plugin-react": "^1.2.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-squirrel-startup": "^1.0.1",
+    "i18next": "^23.11.5",
+    "lucide-react": "^0.562.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-i18next": "^14.1.2",
+    "update-electron-app": "^3.1.2",
+    "vite": "^2.8.6",
+    "vite-plugin-electron": "^0.28.7",
+    "vite-plugin-electron-renderer": "^0.14.5"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.10.2",
+    "@electron-forge/maker-deb": "^7.10.2",
+    "@electron-forge/maker-rpm": "^7.10.2",
+    "@electron-forge/maker-squirrel": "^7.10.2",
+    "@electron-forge/maker-zip": "^7.10.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
+    "@electron-forge/plugin-fuses": "^7.10.2",
+    "@electron-forge/publisher-github": "^7.10.2",
+    "@electron/fuses": "^1.8.0",
+    "@types/node": "^17.0.22",
+    "@types/react": "^17.0.41",
+    "@types/react-dom": "^17.0.14",
+    "@typescript-eslint/eslint-plugin": "5.16.0",
+    "@typescript-eslint/parser": "5.16.0",
+    "autoprefixer": "^10.4.4",
+    "concurrently": "^9.2.1",
+    "electron": "^30.0.7",
+    "eslint": "8.11.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-react": "^7.29.4",
+    "postcss": "^8.4.12",
+    "prettier": "2.6.0",
+    "tailwindcss": "^3.0.23",
+    "typescript": "^4.6.2",
+    "wait-on": "^9.0.3"
+  },
+  "build": {
+    "asar": true,
+    "files": [
+      "dist-electron",
+      "dist-vite"
+    ],
+    "directories": {
+      "buildResources": "resources"
+    }
+  }
+}
