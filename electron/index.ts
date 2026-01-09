@@ -6,7 +6,6 @@ import { existsSync } from 'fs';
 import { BrowserWindow, app, ipcMain, IpcMainEvent, nativeTheme } from 'electron';
 import isDev from 'electron-is-dev';
 import { mouse, left, right, up, down } from '@nut-tree/nut-js';
-const updateElectronApp = require('update-electron-app');
 
 const height = 800;
 const width = 800;
@@ -130,7 +129,19 @@ function createWindow() {
 
 // Configure auto-updater (only in production)
 if (!isDev) {
-  updateElectronApp();
+  try {
+    // Use dynamic require to handle potential bundling issues
+    const updateElectronApp = require('update-electron-app');
+    if (typeof updateElectronApp === 'function') {
+      updateElectronApp();
+    } else if (updateElectronApp && typeof updateElectronApp.default === 'function') {
+      updateElectronApp.default();
+    } else {
+      console.warn('update-electron-app module not available or not a function');
+    }
+  } catch (error) {
+    console.error('Failed to initialize auto-updater:', error);
+  }
 }
 
 // This method will be called when Electron has finished
