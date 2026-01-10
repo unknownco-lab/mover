@@ -21,7 +21,8 @@ module.exports = {
       config: {
         name: 'mover',
         setupIcon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.ico'),
-        iconUrl: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.ico'),
+        // iconUrl must be an HTTPS URL (optional - used for Control Panel display)
+        // For now, we'll rely on setupIcon which is used for shortcuts
         shortcutName: 'Mover',
         createDesktopShortcut: true,
         createStartMenuShortcut: true,
