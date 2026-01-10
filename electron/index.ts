@@ -3,7 +3,7 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 
 // Packages
-import { BrowserWindow, app, ipcMain, IpcMainEvent, nativeTheme } from 'electron';
+import { BrowserWindow, app, ipcMain, IpcMainEvent, nativeTheme, session } from 'electron';
 import isDev from 'electron-is-dev';
 import { mouse, left, right, up, down } from '@nut-tree/nut-js';
 
@@ -18,9 +18,9 @@ function getIconPath() {
   const possibleIconPaths = [
     join(__dirname, '../assets/icons/app-icon-simple-256x256.ico'),
     join(app.getAppPath(), 'assets/icons/app-icon-simple-256x256.ico'),
-    join(process.resourcesPath, 'app/assets/icons/app-icon-simple-256x256.ico'),
+    join(process.resourcesPath, 'app/assets/icons/app-icon-simple-256x256.ico')
   ];
-  return possibleIconPaths.find(p => existsSync(p)) || possibleIconPaths[0];
+  return possibleIconPaths.find((p) => existsSync(p)) || possibleIconPaths[0];
 }
 
 function createWindow() {
@@ -38,14 +38,15 @@ function createWindow() {
       preload: join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      // Enable remote debugging in development or when --devtools flag is present
-      webSecurity: isDev ? false : true,
+      // Keep webSecurity enabled for security (in both dev and production)
+      // Only disable if you encounter CORS issues with localhost during development
+      webSecurity: true
     }
   });
 
   const port = process.env.PORT || 3000;
   let url: string;
-  
+
   if (isDev) {
     url = `http://localhost:${port}`;
   } else {
@@ -54,12 +55,12 @@ function createWindow() {
     const possiblePaths = [
       join(__dirname, '../dist-vite/index.html'),
       join(app.getAppPath(), 'dist-vite/index.html'),
-      join(process.resourcesPath, 'app/dist-vite/index.html'),
+      join(process.resourcesPath, 'app/dist-vite/index.html')
     ];
-    
+
     // Try to find the correct path
-    url = possiblePaths.find(path => existsSync(path)) || possiblePaths[0];
-    
+    url = possiblePaths.find((path) => existsSync(path)) || possiblePaths[0];
+
     console.log('Production paths checked:', possiblePaths);
     console.log('Using path:', url);
   }
@@ -76,15 +77,15 @@ function createWindow() {
       } else {
         await window?.loadFile(url);
       }
-      
+
       // Enable DevTools in production if --devtools flag is present (for debugging)
       if (!isDev && process.argv.includes('--devtools')) {
         window?.webContents.openDevTools();
       }
     } catch (error) {
       console.error('Failed to load window:', error);
-      // Show error in DevTools if available
-      if (window && !window.webContents.isDevToolsOpened()) {
+      // Only open DevTools in development mode or if explicitly requested
+      if (isDev && window && !window.webContents.isDevToolsOpened()) {
         window.webContents.openDevTools();
       }
     }
@@ -99,8 +100,8 @@ function createWindow() {
       errorDescription,
       validatedURL
     });
-    // Open DevTools on error to help diagnose
-    if (!window.webContents.isDevToolsOpened()) {
+    // Only open DevTools in development mode or if explicitly requested
+    if (isDev && !window.webContents.isDevToolsOpened()) {
       window.webContents.openDevTools();
     }
   });
@@ -158,10 +159,34 @@ if (!isDev) {
   }
 }
 
+// Configure Content Security Policy
+function configureCSP() {
+  const defaultSession = session.defaultSession;
+
+  // Set CSP headers - stricter in production, more permissive in dev for Vite HMR
+  // Note: In dev, we allow unsafe-eval for Vite HMR, but this is only in development
+  const csp = isDev
+    ? // Development: Allow Vite HMR and dev server connections
+      // unsafe-eval is needed for Vite's HMR in dev mode
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:*; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:*; img-src 'self' data: https:;"
+    : // Production: Strict CSP without unsafe-eval
+      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self'; img-src 'self' data:;";
+
+  defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [csp]
+      }
+    });
+  });
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  configureCSP();
   createWindow();
 
   app.on('activate', () => {
