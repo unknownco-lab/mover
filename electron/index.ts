@@ -1,3 +1,10 @@
+// Handle Squirrel.Windows events (must be at the very top, before any other imports)
+// This handles installation, update, and shortcut creation events
+if (require('electron-squirrel-startup')) {
+  // App was started by Squirrel installer/updater, exit immediately
+  process.exit(0);
+}
+
 // Native
 import { join } from 'path';
 import { existsSync } from 'fs';
