@@ -12,13 +12,13 @@ const width = 800;
 
 function getIconPath() {
   if (isDev) {
-    return join(__dirname, '..', 'src', 'assets', 'icons', 'app-icon-simple-256x256.png');
+    return join(__dirname, '..', 'src', 'assets', 'icons', 'app-icon-simple-256x256.ico');
   }
   // In production, icon is packaged with the app
   const possibleIconPaths = [
-    join(__dirname, '../assets/icons/app-icon-simple-256x256.png'),
-    join(app.getAppPath(), 'assets/icons/app-icon-simple-256x256.png'),
-    join(process.resourcesPath, 'app/assets/icons/app-icon-simple-256x256.png'),
+    join(__dirname, '../assets/icons/app-icon-simple-256x256.ico'),
+    join(app.getAppPath(), 'assets/icons/app-icon-simple-256x256.ico'),
+    join(process.resourcesPath, 'app/assets/icons/app-icon-simple-256x256.ico'),
   ];
   return possibleIconPaths.find(p => existsSync(p)) || possibleIconPaths[0];
 }
