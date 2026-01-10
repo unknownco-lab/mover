@@ -1,6 +1,7 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 const path = require('path');
+const { execSync } = require('child_process');
 
 module.exports = {
   packagerConfig: {
@@ -15,6 +16,27 @@ module.exports = {
     }
   },
   rebuildConfig: {},
+  hooks: {
+    prePackage: async () => {
+      // Clean and rebuild from source to ensure we're packaging the latest code
+      console.log('Cleaning previous builds...');
+      try {
+        execSync('npm run clean', { stdio: 'inherit', cwd: __dirname });
+      } catch (error) {
+        // Clean might fail if directories don't exist, that's okay
+        console.log('Clean completed (or nothing to clean)');
+      }
+      
+      console.log('Building application from source...');
+      try {
+        execSync('npm run build', { stdio: 'inherit', cwd: __dirname });
+        console.log('Build completed successfully');
+      } catch (error) {
+        console.error('Build failed:', error);
+        throw error;
+      }
+    }
+  },
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
