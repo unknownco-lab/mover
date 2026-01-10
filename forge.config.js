@@ -17,22 +17,32 @@ module.exports = {
   },
   rebuildConfig: {},
   hooks: {
-    prePackage: async () => {
+    prePackage: async (forgeConfig, platform, arch) => {
       // Clean and rebuild from source to ensure we're packaging the latest code
-      console.log('Cleaning previous builds...');
+      // This ensures the published app matches what's in the main branch
+      process.stdout.write('\n🔧 [prePackage] Cleaning previous builds...\n');
       try {
-        execSync('npm run clean', { stdio: 'inherit', cwd: __dirname });
+        execSync('npm run clean', { 
+          stdio: 'inherit', 
+          cwd: __dirname,
+          shell: true
+        });
+        process.stdout.write('✅ [prePackage] Clean completed\n');
       } catch (error) {
         // Clean might fail if directories don't exist, that's okay
-        console.log('Clean completed (or nothing to clean)');
+        process.stdout.write('⚠️  [prePackage] Clean completed (or nothing to clean)\n');
       }
       
-      console.log('Building application from source...');
+      process.stdout.write('🔨 [prePackage] Building application from source...\n');
       try {
-        execSync('npm run build', { stdio: 'inherit', cwd: __dirname });
-        console.log('Build completed successfully');
+        execSync('npm run build', { 
+          stdio: 'inherit', 
+          cwd: __dirname,
+          shell: true
+        });
+        process.stdout.write('✅ [prePackage] Build completed successfully\n\n');
       } catch (error) {
-        console.error('Build failed:', error);
+        process.stderr.write(`❌ [prePackage] Build failed: ${error.message}\n`);
         throw error;
       }
     }
@@ -41,7 +51,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        name: 'mover',
+        name: 'Mover',
         setupIcon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.ico'),
         // iconUrl must be an HTTPS URL (optional - used for Control Panel display)
         // For now, we'll rely on setupIcon which is used for shortcuts
@@ -79,7 +89,7 @@ module.exports = {
       config: {
         repository: {
           owner: 'unknownco-lab',
-          name: 'mover',
+          name: 'Mover',
         },
         draft: true,
         prerelease: false,

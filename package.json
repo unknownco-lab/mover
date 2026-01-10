@@ -1,6 +1,6 @@
 {
-  "name": "mover",
-  "version": "1.0.9",
+  "name": "Mover",
+  "version": "1.0.10",
   "license": "MIT",
   "main": "dist-electron/index.js",
   "author": {
@@ -17,7 +17,7 @@
     "type": "git",
     "url": "https://github.com/unknownco-lab/mover"
   },
-  "productName": "mover",
+  "productName": "Mover",
   "scripts": {
     "dev": "vite",
     "dev:electron": "concurrently \"vite\" \"wait-on http://localhost:3000 && electron .\"",
