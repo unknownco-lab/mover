@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Controls } from './components/controls';
 import { StatusIndicator } from './components/status-indicator';
 import { Activity } from 'lucide-react';
+import AppBar from './AppBar';
 
 export default function App() {
   const [isRunning, setIsRunning] = useState(false);
@@ -163,6 +164,7 @@ export default function App() {
     <div className="min-h-screen flex">
       <div className="w-full bg-zinc-900 overflow-hidden flex flex-col flex-1">
         {/* Header */}
+        <AppBar />
         <div className="px-6 py-5 flex items-center gap-3">
           <div className="p-2 bg-purple-600/20 rounded-xl">
             <Activity className="w-6 h-6 text-purple-500" />
