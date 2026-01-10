@@ -142,22 +142,8 @@ function createWindow() {
   nativeTheme.themeSource = 'dark';
 }
 
-// Configure auto-updater (only in production)
-if (!isDev) {
-  try {
-    // Use dynamic require to handle potential bundling issues
-    const updateElectronApp = require('update-electron-app');
-    if (typeof updateElectronApp === 'function') {
-      updateElectronApp();
-    } else if (updateElectronApp && typeof updateElectronApp.default === 'function') {
-      updateElectronApp.default();
-    } else {
-      console.warn('update-electron-app module not available or not a function');
-    }
-  } catch (error) {
-    console.error('Failed to initialize auto-updater:', error);
-  }
-}
+// Auto-updater is now initialized in app.whenReady() with a delay
+// to prevent restart loops during app startup
 
 // Configure Content Security Policy
 function configureCSP() {
@@ -188,6 +174,28 @@ function configureCSP() {
 app.whenReady().then(() => {
   configureCSP();
   createWindow();
+
+  // Delay auto-update check to prevent restart loop during app startup
+  // Wait 10 seconds after app is ready before checking for updates
+  if (!isDev) {
+    setTimeout(() => {
+      try {
+        const updateElectronApp = require('update-electron-app');
+        const updater = typeof updateElectronApp === 'function' ? updateElectronApp : updateElectronApp?.default;
+
+        if (updater) {
+          updater({
+            repo: 'unknownco-lab/mover',
+            updateInterval: '5 minutes',
+            notifyUser: true,
+            autoDownload: false
+          });
+        }
+      } catch (error) {
+        console.error('Failed to initialize auto-updater:', error);
+      }
+    }, 10000); // 10 second delay
+  }
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
