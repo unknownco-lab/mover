@@ -10,9 +10,10 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 
 // Packages
-import { BrowserWindow, app, ipcMain, IpcMainEvent, nativeTheme, session } from 'electron';
+import { BrowserWindow, app, ipcMain, IpcMainEvent, nativeTheme, session, systemPreferences } from 'electron';
 import isDev from 'electron-is-dev';
-import { mouse, left, right, up, down } from '@nut-tree/nut-js';
+// Lazy import nut-js to avoid permission checks on startup
+let nutJsModule: any = null;
 
 const height = 800;
 const width = 800;
@@ -233,6 +234,20 @@ ipcMain.on('message', (event: IpcMainEvent, message: any) => {
 
 // Track cancellation state
 let currentOperationCancelled = false;
+let permissionRequestShown = false;
+
+// Lazy load nut-js module only when needed
+async function getNutJs() {
+  if (!nutJsModule) {
+    try {
+      nutJsModule = await import('@nut-tree/nut-js');
+    } catch (error) {
+      console.error('Failed to load nut-js:', error);
+      throw new Error('Failed to initialize mouse control library');
+    }
+  }
+  return nutJsModule;
+}
 
 // Mouse control handlers
 ipcMain.handle('mouse:move', async (_event, direction: 'left' | 'right' | 'up' | 'down', pixels: number) => {
@@ -241,7 +256,30 @@ ipcMain.handle('mouse:move', async (_event, direction: 'left' | 'right' | 'up' |
     return { success: false, error: 'Cancelled' };
   }
 
+  // On macOS, check permissions first to avoid repeated System Preferences prompts
+  if (process.platform === 'darwin' && !permissionRequestShown) {
+    try {
+      // Check if accessibility permissions are granted (this doesn't prompt)
+      const hasPermission = systemPreferences.isTrustedAccessibilityClient(false);
+      if (!hasPermission && !permissionRequestShown) {
+        permissionRequestShown = true;
+        return { 
+          success: false, 
+          error: 'Accessibility permissions not granted. Please enable in System Settings > Privacy & Security > Accessibility, then try again.' 
+        };
+      }
+    } catch (error) {
+      // If check fails, allow nut-js to handle it, but only once
+      if (!permissionRequestShown) {
+        permissionRequestShown = true;
+      }
+    }
+  }
+
   try {
+    const nutJs = await getNutJs();
+    const { mouse, left, right, up, down } = nutJs;
+    
     switch (direction) {
       case 'left':
         await mouse.move(left(pixels));
@@ -259,7 +297,20 @@ ipcMain.handle('mouse:move', async (_event, direction: 'left' | 'right' | 'up' |
     return { success: true };
   } catch (error) {
     console.error('Mouse movement error:', error);
-    return { success: false, error: String(error) };
+    const errorMessage = String(error);
+    
+    // Check if it's a permission error
+    if (errorMessage.includes('accessibility') || errorMessage.includes('permission')) {
+      // Mark that we've encountered a permission error to prevent loops
+      if (process.platform === 'darwin') {
+        permissionRequestShown = true;
+      }
+      return { 
+        success: false, 
+        error: 'Accessibility permissions required. Please enable in System Settings > Privacy & Security > Accessibility, then restart the app.' 
+      };
+    }
+    return { success: false, error: errorMessage };
   }
 });
 
