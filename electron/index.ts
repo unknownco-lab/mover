@@ -18,14 +18,18 @@ const height = 800;
 const width = 800;
 
 function getIconPath() {
+  // Determine icon extension based on platform
+  const iconExt = process.platform === 'darwin' ? 'icns' : process.platform === 'win32' ? 'ico' : 'png';
+  const iconName = `app-icon-simple-256x256.${iconExt}`;
+  
   if (isDev) {
-    return join(__dirname, '..', 'src', 'assets', 'icons', 'app-icon-simple-256x256.ico');
+    return join(__dirname, '..', 'src', 'assets', 'icons', iconName);
   }
   // In production, icon is packaged with the app
   const possibleIconPaths = [
-    join(__dirname, '../assets/icons/app-icon-simple-256x256.ico'),
-    join(app.getAppPath(), 'assets/icons/app-icon-simple-256x256.ico'),
-    join(process.resourcesPath, 'app/assets/icons/app-icon-simple-256x256.ico')
+    join(__dirname, `../assets/icons/${iconName}`),
+    join(app.getAppPath(), `assets/icons/${iconName}`),
+    join(process.resourcesPath, `app/assets/icons/${iconName}`)
   ];
   return possibleIconPaths.find((p) => existsSync(p)) || possibleIconPaths[0];
 }
