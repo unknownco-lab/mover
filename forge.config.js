@@ -6,7 +6,9 @@ const { execSync } = require('child_process');
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.ico'),
+    // Icon path without extension - Electron Packager will auto-detect:
+    // .icns on macOS, .ico on Windows, .png on Linux
+    icon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256'),
     // Code signing and notarization disabled for local development
     // To enable for production, uncomment and provide environment variables:
     // osxSign: {},
