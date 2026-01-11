@@ -9,6 +9,30 @@ module.exports = {
     // Icon path without extension - Electron Packager will auto-detect:
     // .icns on macOS, .ico on Windows, .png on Linux
     icon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256'),
+    // Exclude unnecessary files from packaging
+    // Note: Electron Packager automatically includes production dependencies from package.json
+    // We cannot ignore node_modules entirely as the main process requires runtime dependencies
+    // like electron-squirrel-startup, electron-is-dev, update-electron-app, and @nut-tree/nut-js
+    ignore: [
+      /^\/src/,
+      /^\/electron\/(index|preload)\.ts$/,
+      /^\/\.git/,
+      /^\/\.vscode/,
+      /^\/\.idea/,
+      /^\/\.env/,
+      /^\/forge\.config\.js$/,
+      /^\/vite\.config\.ts$/,
+      /^\/tsconfig\.json$/,
+      /^\/package-lock\.json$/,
+      /^\/README\.md$/,
+      /^\/MARKETING\.md$/,
+      /^\/LICENSE\.md$/,
+      /^\/\.prettierignore$/,
+      /^\/\.gitignore$/,
+      /^\/\.eslintrc/,
+      /^\/postcss\.config\.js$/,
+      /^\/tailwind\.config\.js$/,
+    ],
     // Code signing and notarization disabled for local development
     // To enable for production, uncomment and provide environment variables:
     // osxSign: {},
