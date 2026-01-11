@@ -7,13 +7,15 @@ module.exports = {
   packagerConfig: {
     asar: true,
     icon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.ico'),
-    osxSign: {},
-    osxNotarize: {
-      tool: 'notarytool',
-      appleId: process.env.APPLE_ID,
-      appleIdPassword: process.env.APPLE_PASSWORD,
-      teamId: process.env.APPLE_TEAM_ID
-    }
+    // Code signing and notarization disabled for local development
+    // To enable for production, uncomment and provide environment variables:
+    // osxSign: {},
+    // osxNotarize: {
+    //   tool: 'notarytool',
+    //   appleId: process.env.APPLE_ID,
+    //   appleIdPassword: process.env.APPLE_PASSWORD,
+    //   teamId: process.env.APPLE_TEAM_ID
+    // }
   },
   rebuildConfig: {},
   hooks: {
