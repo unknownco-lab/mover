@@ -8,7 +8,7 @@ module.exports = {
     asar: true,
     // Icon path without extension - Electron Packager will auto-detect:
     // .icns on macOS, .ico on Windows, .png on Linux
-    icon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256'),
+    icon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon'),
     // Exclude unnecessary files from packaging
     // Note: Electron Packager automatically includes production dependencies from package.json
     // We cannot ignore node_modules entirely as the main process requires runtime dependencies
@@ -80,7 +80,7 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'Mover',
-        setupIcon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon-simple-256x256.ico'),
+        setupIcon: path.join(__dirname, 'src', 'assets', 'icons', 'app-icon.ico'),
         // iconUrl must be an HTTPS URL (optional - used for Control Panel display)
         // For now, we'll rely on setupIcon which is used for shortcuts
         shortcutName: 'Mover',

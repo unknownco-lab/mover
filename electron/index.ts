@@ -21,8 +21,8 @@ const width = 800;
 function getIconPath() {
   // Determine icon extension based on platform
   const iconExt = process.platform === 'darwin' ? 'icns' : process.platform === 'win32' ? 'ico' : 'png';
-  const iconName = `app-icon-simple-256x256.${iconExt}`;
-  
+  const iconName = `app-icon.${iconExt}`;
+
   if (isDev) {
     return join(__dirname, '..', 'src', 'assets', 'icons', iconName);
   }
@@ -263,9 +263,10 @@ ipcMain.handle('mouse:move', async (_event, direction: 'left' | 'right' | 'up' |
       const hasPermission = systemPreferences.isTrustedAccessibilityClient(false);
       if (!hasPermission && !permissionRequestShown) {
         permissionRequestShown = true;
-        return { 
-          success: false, 
-          error: 'Accessibility permissions not granted. Please enable in System Settings > Privacy & Security > Accessibility, then try again.' 
+        return {
+          success: false,
+          error:
+            'Accessibility permissions not granted. Please enable in System Settings > Privacy & Security > Accessibility, then try again.'
         };
       }
     } catch (error) {
@@ -279,7 +280,7 @@ ipcMain.handle('mouse:move', async (_event, direction: 'left' | 'right' | 'up' |
   try {
     const nutJs = await getNutJs();
     const { mouse, left, right, up, down } = nutJs;
-    
+
     switch (direction) {
       case 'left':
         await mouse.move(left(pixels));
@@ -298,16 +299,17 @@ ipcMain.handle('mouse:move', async (_event, direction: 'left' | 'right' | 'up' |
   } catch (error) {
     console.error('Mouse movement error:', error);
     const errorMessage = String(error);
-    
+
     // Check if it's a permission error
     if (errorMessage.includes('accessibility') || errorMessage.includes('permission')) {
       // Mark that we've encountered a permission error to prevent loops
       if (process.platform === 'darwin') {
         permissionRequestShown = true;
       }
-      return { 
-        success: false, 
-        error: 'Accessibility permissions required. Please enable in System Settings > Privacy & Security > Accessibility, then restart the app.' 
+      return {
+        success: false,
+        error:
+          'Accessibility permissions required. Please enable in System Settings > Privacy & Security > Accessibility, then restart the app.'
       };
     }
     return { success: false, error: errorMessage };

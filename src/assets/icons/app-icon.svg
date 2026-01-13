@@ -1,30 +1,12 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="512" height="512" rx="128" fill="#18181B"/>
+  <!-- Purple rounded square background -->
+  <rect width="512" height="512" rx="128" fill="#8A2BE2"/>
   
-  <!-- Outer glow ring -->
-  <circle cx="256" cy="256" r="220" fill="none" stroke="#3B1E6B" stroke-width="2" opacity="0.3"/>
-  <circle cx="256" cy="256" r="200" fill="none" stroke="#4B2A7F" stroke-width="2" opacity="0.4"/>
-  
-  <!-- Purple gradient circle background -->
-  <circle cx="256" cy="256" r="160" fill="url(#purpleGradient)"/>
-  
-  <!-- Darker inner circle for depth -->
-  <circle cx="256" cy="256" r="140" fill="#4B2A7F" opacity="0.5"/>
-  
-  <!-- Pulse/Heartbeat Icon -->
+  <!-- Pulse/Heartbeat Icon (white) -->
   <path d="M120 256 L180 256 L200 200 L230 310 L260 180 L290 280 L310 256 L392 256" 
-        stroke="#E9D5FF" 
+        stroke="#FFFFFF" 
         stroke-width="20" 
         stroke-linecap="round" 
         stroke-linejoin="round"
         fill="none"/>
-  
-  <defs>
-    <linearGradient id="purpleGradient" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#7C3AED"/>
-      <stop offset="0.5" stop-color="#6B21A8"/>
-      <stop offset="1" stop-color="#581C87"/>
-    </linearGradient>
-  </defs>
 </svg>
