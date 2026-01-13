@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import Icon from './assets/icons/app-icon-simple-256x256.png';
+import Icon from './assets/icons/app-icon.png';
 
 function AppBar() {
   const [isMaximize, setMaximize] = useState(false);
@@ -56,17 +56,7 @@ function AppBar() {
   return (
     <div className="bg-slate-800 py-0.5 flex justify-between draggable text-white" style={{ zIndex: 1000 }}>
       <div className="inline-flex">
-        <img
-          className="h-6 lg:-ml-2"
-          src={Icon}
-          alt="Mover Icon"
-          onError={(e) => {
-            // Fallback if icon fails to load
-            console.warn('AppBar icon failed to load');
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-        <p className="text-xs md:pt-1 ml-1">Mover</p>
+        <p className="text-xs ml-1">Mover</p>
       </div>
       <div className="inline-flex -mt-1">
         <button
