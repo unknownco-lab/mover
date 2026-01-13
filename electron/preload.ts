@@ -78,7 +78,7 @@ function useLoading() {
   `;
 
   const htmlContent = `
-    <img class="loading-icon" src="/assets/icons/download-icon.svg" alt="Loading" />
+    <img class="loading-icon" src="/assets/icons/app-icon.svg" alt="Loading" />
   `;
 
   const oStyle = document.createElement('style');
