@@ -111,7 +111,7 @@ export function Controls({ config, setConfig, isRunning, onStart, onStop }: Cont
             value={config.interval}
             onChange={(e) => setConfig({ ...config, interval: parseInt(e.target.value) })}
             disabled={isRunning}
-            className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed accent-purple-500"
+            className="w-full h-2 bg-zinc-700 rounded-lg cursor-pointer disabled:cursor-not-allowed accent-purple-500"
           />
           <div className="flex justify-between text-xs text-zinc-600">
             <span>1s</span>
@@ -131,7 +131,7 @@ export function Controls({ config, setConfig, isRunning, onStart, onStop }: Cont
             value={config.distance}
             onChange={(e) => setConfig({ ...config, distance: parseInt(e.target.value) })}
             disabled={isRunning}
-            className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer disabled:cursor-not-allowed accent-purple-500"
+            className="w-full h-2 bg-zinc-700 rounded-lg cursor-pointer disabled:cursor-not-allowed accent-purple-500"
           />
           <div className="flex justify-between text-xs text-zinc-600">
             <span>10px</span>
