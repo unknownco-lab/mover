@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"C:\\\\Users\\\\Dylan\\\\Documents\\\\projects\\\\mover\\\\.github\"\" 2>nul || echo \"No .github directory \")"
+    ]
+  }
+}
