@@ -22,4 +22,7 @@ npm-debug.log*
 # npm config (may contain auth tokens)
 .npmrc
 
+# Claude Code
+.claude/
+
 out/
