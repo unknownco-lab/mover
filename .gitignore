@@ -24,5 +24,6 @@ npm-debug.log*
 
 # Claude Code
 .claude/
+tmpclaude-*
 
 out/
