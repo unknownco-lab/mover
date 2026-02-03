@@ -320,3 +320,40 @@ ipcMain.handle('mouse:move', async (_event, direction: 'left' | 'right' | 'up' |
 ipcMain.on('mouse:cancel', () => {
   currentOperationCancelled = true;
 });
+
+/**
+ * IPC Handlers for License Operations
+ */
+
+// Check if app is licensed
+ipcMain.handle('license:check', () => {
+  return LicenseManager.checkLicense();
+});
+
+// Activate a new license
+ipcMain.handle('license:activate', (_, licenseKey: string) => {
+  return LicenseManager.activateLicense(licenseKey);
+});
+
+// Deactivate current license
+ipcMain.handle('license:deactivate', () => {
+  LicenseManager.deactivateLicense();
+  return { success: true };
+});
+
+// Get license info
+ipcMain.handle('license:getInfo', () => {
+  return LicenseManager.getLicenseInfo();
+});
+
+// Validate license online (this one is still async)
+ipcMain.handle('license:validateOnline', async () => {
+  return await LicenseManager.validateOnline();
+});
+
+// Format license key for display
+ipcMain.handle('license:format', (_, licenseKey?: string) => {
+  return LicenseManager.formatLicenseKey(licenseKey);
+});
+
+console.log('License IPC handlers registered');
