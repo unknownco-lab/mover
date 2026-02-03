@@ -11,7 +11,6 @@ import { existsSync } from 'fs';
 
 // Packages
 import { BrowserWindow, app, ipcMain, IpcMainEvent, nativeTheme, session, systemPreferences } from 'electron';
-import { LicenseManager } from './license/manager';
 import isDev from 'electron-is-dev';
 // Lazy import nut-js to avoid permission checks on startup
 let nutJsModule: any = null;
