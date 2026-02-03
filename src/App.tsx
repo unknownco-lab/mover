@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Controls } from './components/controls';
 import { StatusIndicator } from './components/status-indicator';
+import { LicenseActivation } from './components/LicenseActivation';
 import { Activity } from 'lucide-react';
 import AppBar from './AppBar';
 
 export default function App() {
   const [isRunning, setIsRunning] = useState(false);
+  const [isLicensed, setIsLicensed] = useState<boolean | null>(null); // null = checking
   const [config, setConfig] = useState({
     pattern: 'circular',
     interval: 5,
@@ -14,6 +16,26 @@ export default function App() {
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Check license on startup
+  useEffect(() => {
+    const checkLicense = async () => {
+      try {
+        const status = await window.license.checkLicense();
+        setIsLicensed(status.isLicensed);
+
+        // TODO: Implement periodic online validation in the future
+        // if (status.needsValidation) {
+        //   await window.license.validateOnline();
+        // }
+      } catch (error) {
+        console.error('Failed to check license:', error);
+        setIsLicensed(false);
+      }
+    };
+
+    checkLicense();
+  }, []);
 
   useEffect(() => {
     // Remove loading screen - with fallback if preload script didn't load
@@ -160,6 +182,25 @@ export default function App() {
     };
   }, []);
 
+  const handleActivationSuccess = () => {
+    setIsLicensed(true);
+  };
+
+  // Show loading state while checking license
+  if (isLicensed === null) {
+    return (
+      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // Show license activation screen if not licensed
+  if (!isLicensed) {
+    return <LicenseActivation onActivationSuccess={handleActivationSuccess} />;
+  }
+
+  // Show main app if licensed
   return (
     <div className="min-h-screen flex">
       <div className="w-full bg-zinc-900 overflow-hidden flex flex-col flex-1">

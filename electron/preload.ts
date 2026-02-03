@@ -21,6 +21,41 @@ function domReady(condition: DocumentReadyState[] = ['complete', 'interactive'])
   });
 }
 
+// License API
+const licenseApi = {
+  checkLicense: () => ipcRenderer.invoke('license:check'),
+  activateLicense: (licenseKey: string) => ipcRenderer.invoke('license:activate', licenseKey),
+  deactivateLicense: () => ipcRenderer.invoke('license:deactivate'),
+  getLicenseInfo: () => ipcRenderer.invoke('license:getInfo'),
+  validateOnline: () => ipcRenderer.invoke('license:validateOnline'),
+  formatLicenseKey: (licenseKey?: string) => ipcRenderer.invoke('license:format', licenseKey),
+};
+
+// TypeScript types for renderer process
+export interface LicenseAPI {
+  checkLicense: () => Promise<{
+    isLicensed: boolean;
+    payload?: {
+      email: string;
+      licenseId: string;
+      issuedAt: number;
+      expiresAt: number | null;
+      product: string;
+      version: string;
+    };
+    needsValidation?: boolean;
+  }>;
+  activateLicense: (licenseKey: string) => Promise<{
+    valid: boolean;
+    payload?: any;
+    error?: string;
+  }>;
+  deactivateLicense: () => Promise<{ success: boolean }>;
+  getLicenseInfo: () => Promise<any>;
+  validateOnline: () => Promise<{ valid: boolean; error?: string }>;
+  formatLicenseKey: (licenseKey?: string) => Promise<string>;
+}
+
 const safeDOM = {
   append(parent: HTMLElement, child: HTMLElement) {
     if (!Array.from(parent.children).find((e) => e === child)) {
@@ -110,6 +145,7 @@ declare global {
   interface Window {
     Main: typeof api;
     ipcRenderer: typeof ipcRenderer;
+    license: LicenseAPI;
   }
 }
 
@@ -160,3 +196,5 @@ const api = {
 };
 
 contextBridge.exposeInMainWorld('Main', api);
+// Expose to renderer process
+contextBridge.exposeInMainWorld('license', licenseApi);
