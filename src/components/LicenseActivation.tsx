@@ -52,11 +52,11 @@ export function LicenseActivation({ onActivationSuccess }: LicenseActivationProp
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-6">
-      <div className="w-full bg-zinc-900 overflow-hidden flex flex-col flex-1">
+    <div className="min-h-screen flex">
+      <div className="w-full min-h-screen bg-zinc-900 flex flex-col flex-1">
         <AppBar />
-      </div>
-      <div className="bg-zinc-800 rounded-2xl shadow-2xl p-8 max-w-md w-full space-y-6">
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="bg-zinc-800 rounded-2xl shadow-2xl p-8 max-w-md w-full space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="flex justify-center">
@@ -144,6 +144,8 @@ export function LicenseActivation({ onActivationSuccess }: LicenseActivationProp
           >
             i.am.unknownco@gmail.com
           </a>
+          </div>
+          </div>
         </div>
       </div>
     </div>

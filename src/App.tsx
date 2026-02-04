@@ -70,12 +70,37 @@ export default function App() {
     };
 
     switch (pattern) {
-      case 'circular':
-        await moveWithCancel('right', distance);
-        await moveWithCancel('down', distance);
-        await moveWithCancel('left', distance);
-        await moveWithCancel('up', distance);
+      case 'circular': {
+        // Move in an actual circle using trigonometry
+        const steps = 16; // Number of points around the circle
+        const radius = distance / 2;
+
+        for (let i = 0; i < steps; i++) {
+          if (signal.aborted) throw new Error('Aborted');
+
+          const currentAngle = (i / steps) * 2 * Math.PI;
+          const nextAngle = ((i + 1) / steps) * 2 * Math.PI;
+
+          // Calculate movement delta to next point
+          const dx = Math.round(radius * (Math.cos(nextAngle) - Math.cos(currentAngle)));
+          const dy = Math.round(radius * (Math.sin(nextAngle) - Math.sin(currentAngle)));
+
+          // Move horizontally
+          if (dx > 0) {
+            await moveWithCancel('right', dx);
+          } else if (dx < 0) {
+            await moveWithCancel('left', Math.abs(dx));
+          }
+
+          // Move vertically
+          if (dy > 0) {
+            await moveWithCancel('down', dy);
+          } else if (dy < 0) {
+            await moveWithCancel('up', Math.abs(dy));
+          }
+        }
         break;
+      }
       case 'random': {
         const directions: Array<'left' | 'right' | 'up' | 'down'> = ['left', 'right', 'up', 'down'];
         const randomDir = directions[Math.floor(Math.random() * directions.length)];

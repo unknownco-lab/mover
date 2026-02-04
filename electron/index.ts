@@ -8,6 +8,7 @@ if (require('electron-squirrel-startup')) {
 // Native
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { LicenseManager } from './license/manager';
 
 // Packages
 import { BrowserWindow, app, ipcMain, IpcMainEvent, nativeTheme, session, systemPreferences } from 'electron';
