@@ -1,6 +1,6 @@
 {
   "name": "Mover",
-  "version": "1.0.14",
+  "version": "1.0.17",
   "license": "MIT",
   "main": "dist-electron/index.js",
   "author": {
@@ -39,7 +39,10 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish"
+    "publish": "electron-forge publish",
+    "release:patch": "npm version patch && git push && git push --tags",
+    "release:minor": "npm version minor && git push && git push --tags",
+    "release:major": "npm version major && git push && git push --tags"
   },
   "dependencies": {
     "@fluentui/react-components": "^9.72.9",
